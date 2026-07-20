@@ -10,7 +10,7 @@ router.get(
   async function (req: Request, res: Response, next: NextFunction) {
     try {
       const users = await prisma.user.findMany({
-        include: { blogs: true },
+        include: { blogs: true, role: true },
       });
       res.send(users);
     } catch (error) {
@@ -24,11 +24,21 @@ router.post(
   async function (req: Request, res: Response, next: NextFunction) {
     try {
       const { name, email, password } = req.body;
+
+      const UserRole = await prisma.roles.findUnique({
+        where: { title: "user" },
+      });
+
+      if (!UserRole) {
+        throw new Error("User role not found");
+      }
+
       const user = await prisma.user.create({
         data: {
           id: undefined,
           name: name,
           email: email,
+          roleId: UserRole.id,
           password: password,
           createdAt: new Date(),
           updatedAt: new Date(),
