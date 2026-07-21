@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 const userRoutes = require("./routes/users");
 const blogRoutes = require("./routes/blogs");
+const authRoutes = require("./routes/auth");
 
 const app = express();
 
@@ -13,9 +14,9 @@ app.get("/", (req, res) => {
   });
 });
 
+app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use("/blog", blogRoutes);
-
 
 const PORT = 3000;
 

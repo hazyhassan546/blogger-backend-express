@@ -1,6 +1,7 @@
 import { NextFunction, Response, Request } from "express";
 import prisma from "../lib/prisma";
 import { BLOGS_STATUSES } from "../common/constants";
+import { authenticate } from "../middlewares/authMiddleware";
 
 var express = require("express");
 var router = express.Router();
@@ -35,16 +36,17 @@ router.get(
 
 router.post(
   "/",
+  authenticate,
   async function (req: Request, res: Response, next: NextFunction) {
     try {
-      const { title, description, authorId } = req.body;
+      const { title, description } = req.body;
       const blog = await prisma.blogs.create({
         data: {
           id: undefined,
           title: title,
           description: description,
           status: BLOGS_STATUSES.DRAFT,
-          authorId: authorId,
+          authorId: req.user.id,
           createdAt: new Date(),
           updatedAt: new Date(),
         },
@@ -58,6 +60,7 @@ router.post(
 
 router.put(
   "/:id",
+  authenticate,
   async function (req: Request, res: Response, next: NextFunction) {
     try {
       const { title, description } = req.body;
@@ -81,6 +84,7 @@ router.put(
 
 router.delete(
   "/:id",
+  authenticate,
   async function (req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
@@ -96,6 +100,7 @@ router.delete(
 
 router.put(
   "/updateStatus/:id",
+  authenticate,
   async function (req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
