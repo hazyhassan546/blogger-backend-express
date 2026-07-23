@@ -6,16 +6,20 @@ import { authenticate } from "../middlewares/authMiddleware";
 var express = require("express");
 var router = express.Router();
 
-router.get("/", async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const blogs = await prisma.blogs.findMany({
-      include: {},
-    });
-    res.send(blogs);
-  } catch (error) {
-    next(error);
-  }
-});
+router.get(
+  "/",
+  authenticate,
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const blogs = await prisma.blogs.findMany({
+        include: {},
+      });
+      res.send(blogs);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
 
 router.get(
   "/published",

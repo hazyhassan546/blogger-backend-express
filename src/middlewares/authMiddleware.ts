@@ -6,15 +6,14 @@ export const authenticate = (
   res: Response,
   next: NextFunction,
 ) => {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies.access_token;
 
-  if (!authHeader?.startsWith("Bearer ")) {
+  if (!token) {
+    console.log("No token found");
     return res.status(401).json({
       message: "Unauthorized",
     });
   }
-
-  const token = authHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

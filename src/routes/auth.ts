@@ -58,6 +58,8 @@ router.post(
         include: { role: true },
       });
 
+      console.log("user", user);
+
       if (!user) {
         throw new Error("User not found");
       }
